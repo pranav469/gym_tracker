@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 import 'features/home/presentation/pages/home_screen.dart';
+import 'features/nutrition/presentation/pages/nutrition_screen.dart';
+import 'features/progress/presentation/pages/progress_screen.dart';
+import 'features/workout/presentation/pages/workout_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,9 +18,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> pages = const [
     HomeScreen(),
-    Center(child: Text("Workout")),
-    Center(child: Text("Add")),
-    Center(child: Text("Progress")),
+    WorkoutScreen(),
+    NutritionScreen(),
+    ProgressScreen(),
     Center(child: Text("Profile")),
   ];
 

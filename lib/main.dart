@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gyn_tracking/main_screen.dart';
-
 import 'features/registration/presentation/pages/reg_page_step_one.dart';
 
 void main() {

@@ -2,30 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'dart:math';
-//
-// class HomeScreen extends StatefulWidget {
-//   const HomeScreen({super.key});
-//
-//   @override
-//   State<HomeScreen> createState() => _HomeScreenState();
-// }
-//
-// class _HomeScreenState extends State<HomeScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return SafeArea(child: Scaffold(
-//       body: SingleChildScrollView(
-//
-//       ),
-//     ));
-//   }
-// }
 
-
-
-
-
-// ─── Home Screen ──────────────────────────────────────────────────────────────
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -70,6 +47,20 @@ class _HomeScreenState extends State<HomeScreen> {
     Exercise('Incline DB Press'),
     Exercise('Cable Fly'),
   ];
+
+  String getGreeting() {
+    final hour = DateTime.now().hour;
+
+    if (hour >= 5 && hour < 12) {
+      return "Good Morning";
+    } else if (hour >= 12 && hour < 17) {
+      return "Good Afternoon";
+    } else if (hour >= 17 && hour < 21) {
+      return "Good Evening";
+    } else {
+      return "Good Night";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // Greeting
           Text(
-            'Good morning',
+            getGreeting(),
             style: TextStyle(
               color: Colors.white.withOpacity(0.72),
               fontSize: 13,
