@@ -1,3 +1,5 @@
+import '../../domain/entities/user_profile.dart';
+
 abstract class RegistrationEvent {}
 
 class SaveProfileEvent extends RegistrationEvent {

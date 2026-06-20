@@ -1,6 +1,8 @@
 
 import 'package:gyn_tracking/features/registration/presentation/bloc/registartion_event.dart';
 import 'package:gyn_tracking/features/registration/presentation/bloc/registartion_state.dart';
+import 'package:bloc/bloc.dart';
+import '../../domain/usecases/save_user_profile_usecase.dart';
 
 class RegistrationBloc
     extends Bloc<RegistrationEvent, RegistrationState> {
