@@ -1,26 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gyn_tracking/features/home/presentation/pages/home_screen.dart';
 import 'package:gyn_tracking/features/registration/presentation/pages/reg_page_step_three.dart';
 
+import '../../../../main_screen.dart';
+import '../../domain/entities/user_profile.dart';
+import '../bloc/registartion_event.dart';
+import '../bloc/registration_bloc.dart';
+
 class RegPageStepTwo extends StatefulWidget {
-  const RegPageStepTwo({super.key});
+  final UserProfile profile;
+  const RegPageStepTwo({super.key, required this.profile});
 
   @override
   State<RegPageStepTwo> createState() => _RRegPageStepTwoState();
 }
 
 class _RRegPageStepTwoState extends State<RegPageStepTwo> {
-  final TextEditingController ageController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController mobileNoController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  // final TextEditingController ageController = TextEditingController();
+  // final TextEditingController emailController = TextEditingController();
+  // final TextEditingController mobileNoController = TextEditingController();
+  // final TextEditingController passwordController = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
-    ageController.dispose();
-    emailController.dispose();
-    mobileNoController.dispose();
-    passwordController.dispose();
+    // ageController.dispose();
+    // emailController.dispose();
+    // mobileNoController.dispose();
+    // passwordController.dispose();
+  }
+
+  late TextEditingController targetWeightController;
+  late TextEditingController calorieController;
+  late TextEditingController proteinController;
+  late TextEditingController carbController;
+  late TextEditingController fatController;
+  late TextEditingController waterController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    targetWeightController =
+        TextEditingController(
+          text: widget.profile.targetWeight.toStringAsFixed(1),
+        );
+
+    calorieController =
+        TextEditingController(
+          text: widget.profile.dailyCalorieTarget.toString(),
+        );
+
+    proteinController =
+        TextEditingController(
+          text: widget.profile.dailyProteinTarget.toStringAsFixed(1),
+        );
+
+    carbController =
+        TextEditingController(
+          text: widget.profile.dailyCarbTarget.toStringAsFixed(1),
+        );
+
+    fatController =
+        TextEditingController(
+          text: widget.profile.dailyFatTarget.toStringAsFixed(1),
+        );
+
+    waterController =
+        TextEditingController(
+          text: widget.profile.dailyWaterTarget.toStringAsFixed(1),
+        );
   }
 
   @override
@@ -47,59 +97,78 @@ class _RRegPageStepTwoState extends State<RegPageStepTwo> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Form(
-              child: Column(
+              child:Column(
                 children: [
-                  const Text(
-                    "Step 2 of 3",
-                    style: TextStyle(color: Colors.grey, fontSize: 15),
-                  ),
 
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: fieldDecoration("Age", Icons.numbers),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  DropdownButtonFormField<String>(
-                    items: const [
-                      DropdownMenuItem(value: "Male", child: Text("Male")),
-                      DropdownMenuItem(value: "Female", child: Text("Female")),
-                      DropdownMenuItem(value: "Other", child: Text("Other")),
-                    ],
-                    onChanged: (_) {},
-                    decoration: const InputDecoration(labelText: "Gender"),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: fieldDecoration("Height (cm)", Icons.height),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: fieldDecoration(
-                      "Current Weight (kg)",
-                      Icons.monitor_weight_outlined,
+                  Text(
+                    "Review Your Daily Targets",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: 25),
 
                   TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: fieldDecoration(
-                      "Target Weight (kg)",
-                      Icons.monitor_weight_outlined,
+                    controller: targetWeightController,
+                    decoration: const InputDecoration(
+                      labelText: "Target Weight (kg)",
                     ),
+                    keyboardType: TextInputType.number,
+                  ),
+
+                  SizedBox(height: 15),
+
+                  TextFormField(
+                    controller: calorieController,
+                    decoration: const InputDecoration(
+                      labelText: "Calories",
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+
+                  SizedBox(height: 15),
+
+                  TextFormField(
+                    controller: proteinController,
+                    decoration: const InputDecoration(
+                      labelText: "Protein (g)",
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+
+                  SizedBox(height: 15),
+
+                  TextFormField(
+                    controller: carbController,
+                    decoration: const InputDecoration(
+                      labelText: "Carbs (g)",
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+
+                  SizedBox(height: 15),
+
+                  TextFormField(
+                    controller: fatController,
+                    decoration: const InputDecoration(
+                      labelText: "Fat (g)",
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+
+                  SizedBox(height: 15),
+
+                  TextFormField(
+                    controller: waterController,
+                    decoration: const InputDecoration(
+                      labelText: "Water (L)",
+                    ),
+                    keyboardType: TextInputType.number,
                   ),
                 ],
-              ),
+              )
             ),
           ),
         ),
@@ -112,10 +181,53 @@ class _RRegPageStepTwoState extends State<RegPageStepTwo> {
               height: 55,
               child: ElevatedButton(
                 onPressed: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (_) => const RegPageStepThree()),
+                  // );
+                  final updatedProfile = UserProfile(
+                    id: widget.profile.id,
+                    name: widget.profile.name,
+                    email: widget.profile.email,
+                    age: widget.profile.age,
+                    gender: widget.profile.gender,
+                    height: widget.profile.height,
+                    currentWeight: widget.profile.currentWeight,
+
+                    targetWeight:
+                    double.parse(targetWeightController.text),
+
+                    goal: widget.profile.goal,
+
+                    activityLevel: widget.profile.activityLevel,
+
+                    workoutDays: widget.profile.workoutDays,
+
+                    dailyCalorieTarget:
+                    int.parse(calorieController.text),
+
+                    dailyProteinTarget:
+                    double.parse(proteinController.text),
+
+                    dailyCarbTarget:
+                    double.parse(carbController.text),
+
+                    dailyFatTarget:
+                    double.parse(fatController.text),
+
+                    dailyWaterTarget:
+                    double.parse(waterController.text),
+                  );
+
+                  context.read<RegistrationBloc>().add(
+                    SaveProfileEvent(updatedProfile),
+                  );
+
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const RegPageStepThree()),
+                    MaterialPageRoute(builder: (_) => const MainScreen()),
                   );
+
                 },
                 child: const Text("Next"),
               ),

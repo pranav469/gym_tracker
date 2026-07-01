@@ -34,4 +34,11 @@ class UserProfileRepositoryImpl
 
     await localDataSource.saveProfile(model);
   }
+
+  @override
+  Future<UserProfile?> getProfile() async {
+    final data = await localDataSource.getProfile();
+    print('DATA I S ${data?.name}');
+    return data;
+  }
 }

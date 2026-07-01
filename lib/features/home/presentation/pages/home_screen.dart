@@ -3,6 +3,28 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gyn_tracking/features/registration/domain/entities/user_profile.dart';
+
+import '../../../../core/di/injection.dart';
+import '../bloc/home_bloc.dart';
+import '../bloc/home_event.dart';
+import '../bloc/home_state.dart';
+
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return BlocProvider(
+      create: (_) => sl<HomeBloc>()
+        ..add(LoadUserProfileEvent()),
+      child: const HomeScreen(),
+    );
+  }
+}
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -64,31 +86,60 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F0),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildHero(),
-            const SizedBox(height: 20),
-            _buildSection('Nutrition', _buildNutrition()),
-            const SizedBox(height: 20),
-            _buildSection("Today's Workout", _buildWorkout()),
-            const SizedBox(height: 20),
-            _buildSection('Achievement', _buildAchievement()),
-            const SizedBox(height: 20),
-            _buildSection('Quick Add', _buildQuickAdd()),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
+   return BlocBuilder<HomeBloc, HomeState>(
+
+      builder: (context, state) {
+
+        print('RUNTIME IS ${state.runtimeType}');
+
+        if (state is HomeLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (state is HomeLoaded) {
+
+          final user = state.profile;
+        return Scaffold(
+              backgroundColor: const Color(0xFFF5F5F0),
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    //Text('${user.name}'),
+                    _buildHero(user),
+                    const SizedBox(height: 20),
+                    _buildSection('Nutrition', _buildNutrition(user)),
+                    const SizedBox(height: 20),
+                    _buildSection("Today's Workout", _buildWorkout()),
+                    const SizedBox(height: 20),
+                    _buildSection('Achievement', _buildAchievement()),
+                    const SizedBox(height: 20),
+                    _buildSection('Quick Add', _buildQuickAdd()),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            );
+        }
+
+        return const Center(
+          child: Text("No Profile Found"),
+        );
+      },
     );
   }
 
   // ── Hero ──────────────────────────────────────────────────────────────────
 
-  Widget _buildHero() {
+  Widget _buildHero(UserProfile user) {
+    final name = user.name;
+    final currentWeight = user.currentWeight;
+    final proteinTarget = user.dailyProteinTarget;
+    final calorieTarget = user.dailyCalorieTarget;
+    final waterTarget = user.dailyWaterTarget;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -117,8 +168,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 2),
-          const Text(
-            'Pranav 👋',
+           Text(
+            '$name 👋',
             style: TextStyle(
               color: Colors.white,
               fontSize: 22,
@@ -157,9 +208,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontSize: 12,
                       ),
                     ),
-                    const Text(
-                      '72.5 kg',
-                      style: TextStyle(
+                    Text(
+                      '$currentWeight kg',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -235,9 +286,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    _heroRow('Protein', '130 / 160 g'),
-                    _heroRow('Calories', '2100 / 2500'),
-                    _heroRow('Water', '2.3 / 3 L'),
+                    _heroRow('Protein', '130 / $proteinTarget g'),
+                    _heroRow('Calories', '2100 / $calorieTarget'),
+                    _heroRow('Water', '2.3 / $waterTarget L'),
                     _heroRow('Workout', '✓ done',
                         valueColor: const Color(0xFF9FE1CB)),
                   ],
@@ -296,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // ── Nutrition ──────────────────────────────────────────────────────────────
 
-  Widget _buildNutrition() {
+  Widget _buildNutrition(UserProfile user) {
     return Column(
       children: [
         Row(
@@ -311,12 +362,12 @@ class _HomeScreenState extends State<HomeScreen> {
               .toList(),
         ),
         const SizedBox(height: 10),
-        _buildWaterCard(),
+        _buildWaterCard(user),
       ],
     );
   }
 
-  Widget _buildWaterCard() {
+  Widget _buildWaterCard(UserProfile user) {
     const totalDots = 12;
     final waterPct = _waterDots / totalDots;
 
@@ -350,8 +401,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(width: 4),
-              const Text(
-                'of 3 L water',
+               Text(
+                'of ${user.dailyWaterTarget} L water',
                 style: TextStyle(fontSize: 12, color: Color(0xFF888780)),
               ),
             ],

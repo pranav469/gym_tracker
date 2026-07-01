@@ -1,9 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 
 class UserProfileDbHelper {
-  static const String tableName = 'user_profile';
+  static const tableName = 'user_profile';
 
-  /// Create Table
   static Future<void> createTable(Database db) async {
     await db.execute('''
       CREATE TABLE $tableName (
@@ -27,76 +26,37 @@ class UserProfileDbHelper {
     ''');
   }
 
-  /// Insert Profile
-  static Future<int> insertProfile(
+  static Future<void> saveProfile(
       Database db,
       Map<String, dynamic> data,
       ) async {
-    return await db.insert(
+    print('.....');
+    await db.insert(
       tableName,
       data,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  /// Get Profile
-  static Future<Map<String, dynamic>?> getProfile(Database db) async {
+  static Future<Map<String, dynamic>?> getProfile(
+      Database db,
+      ) async {
+    print('REACHED WITH DB - $db');
     final result = await db.query(
       tableName,
       limit: 1,
     );
+    print('RESULT IS $result');
+    print(result.first);
 
-    if (result.isNotEmpty) {
-      return result.first;
-    }
+    if (result.isEmpty) return null;
 
-    return null;
+    return result.first;
   }
 
-  /// Update Profile
-  static Future<int> updateProfile(
+  static Future<void> deleteProfile(
       Database db,
-      Map<String, dynamic> data,
       ) async {
-    return await db.update(
-      tableName,
-      data,
-      where: 'id = ?',
-      whereArgs: [data['id']],
-    );
-  }
-
-  /// Delete Profile
-  static Future<int> deleteProfile(Database db, int id) async {
-    return await db.delete(
-      tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  /// Check if Profile Exists
-  static Future<bool> profileExists(Database db) async {
-    final result = await db.query(
-      tableName,
-      columns: ['id'],
-      limit: 1,
-    );
-
-    return result.isNotEmpty;
-  }
-
-  /// Insert or Update
-  static Future<void> saveProfile(
-      Database db,
-      Map<String, dynamic> data,
-      ) async {
-    final exists = await profileExists(db);
-
-    if (exists) {
-      await updateProfile(db, data);
-    } else {
-      await insertProfile(db, data);
-    }
+    await db.delete(tableName);
   }
 }

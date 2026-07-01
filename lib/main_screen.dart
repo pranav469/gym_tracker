@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   int selectedIndex = 0;
 
   final List<Widget> pages = const [
-    HomeScreen(),
+    HomeView(),
     WorkoutScreen(),
     NutritionScreen(),
     ProgressScreen(),
